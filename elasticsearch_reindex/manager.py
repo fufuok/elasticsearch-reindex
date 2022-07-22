@@ -45,10 +45,6 @@ class Manager:
         Branching logic by input action.
         """
         source_indexes = self.es_client.get_source_indexes()
-        if self.config.indexes:
-            source_indexes = self.es_client.get_user_indexes(
-                user_indexes=self.config.indexes, source_indexes=source_indexes
-            )
         logger.info(f"Source ES host has {len(source_indexes)} indexes")
 
         dest_indexes = self.es_client.get_dest_indexes()

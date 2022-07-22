@@ -20,7 +20,7 @@ def main() -> None:
         "dest_host": "http://localhost:9202",
         "check_interval": 20,
         "concurrent_tasks": 5,
-        "indexes": ["es-index-1", "es-index-2", "es-index-n", "ff_220718"],
+        "indexes": ["es-index-*"],
         # If the source host requires authentication
         # "source_http_auth": "tmp-source-user:tmp-source-PASSWD.220718",
         # If the destination host requires authentication

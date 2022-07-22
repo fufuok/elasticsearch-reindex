@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from elasticsearch import Elasticsearch, exceptions
 
@@ -18,6 +18,7 @@ class ElasticsearchClient:
 
     def __init__(self, config: Config) -> None:
         self.config = config
+        self.indexes = ",".join(config.indexes) if config.indexes else ""
 
     @property
     def source_client(self) -> Elasticsearch:
@@ -39,7 +40,7 @@ class ElasticsearchClient:
         """
         indexes = self.source_client.cat.indices(
             h="index,docs.count", s="index",
-            http_auth=self.config.source_http_auth,
+            index=self.indexes, http_auth=self.config.source_http_auth,
         )
         return self._get_all_indexes(indexes=indexes.split())
 
@@ -54,21 +55,7 @@ class ElasticsearchClient:
         return self._get_all_indexes(indexes=indexes.split())
 
     @staticmethod
-    def get_user_indexes(
-        source_indexes: List[Index], user_indexes: List[str]
-    ) -> List[Index]:
-        """
-        Compare indexes provided by user.
-        Return indexes for migration.
-
-        :param source_indexes: List of source indexes.
-        :param user_indexes: List of user indexes.
-        :return: List of `Index` objects.
-        """
-        return [index for index in source_indexes if index.name in set(user_indexes)]
-
-    @staticmethod
-    def _get_es_client(es_host: str, es_http_auth: [Tuple[str], None]) -> Elasticsearch:
+    def _get_es_client(es_host: str, es_http_auth: Optional[Tuple[str]] = None) -> Elasticsearch:
         """
         Ping ElasticSearch server and return initialized client object.
         """
